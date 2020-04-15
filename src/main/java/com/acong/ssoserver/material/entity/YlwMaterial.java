@@ -1,8 +1,6 @@
 package com.acong.ssoserver.material.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,11 +20,13 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
+@TableName(value = "ylw_material")
 public class YlwMaterial implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    @TableId(value = "id",type = IdType.AUTO)
+    private int id;
 
     private String appearDate;
 
@@ -76,9 +76,9 @@ public class YlwMaterial implements Serializable {
 
     private String yarnCount;
 
-    private LocalDateTime createTime;
+    private String createTime;
 
-    private LocalDateTime updateTime;
+    private String updateTime;
 
 
 }

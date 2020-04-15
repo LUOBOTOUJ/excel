@@ -16,6 +16,6 @@ import java.util.List;
 */
 @Repository(value = "YlwMaterialMapper")
 public interface YlwMaterialMapper extends BaseMapper<YlwMaterial> {
-
+    int insertReturnId(YlwMaterial material);
     }
 

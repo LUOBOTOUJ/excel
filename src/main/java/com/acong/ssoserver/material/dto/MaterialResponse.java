@@ -1,9 +1,7 @@
 package com.acong.ssoserver.material.dto;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 
 @Data
 public class MaterialResponse {
@@ -56,8 +54,8 @@ public class MaterialResponse {
 
     private String yarnCount;
 
-    private LocalDateTime createTime;
+    private String  createTime;
 
-    private LocalDateTime updateTime;
+    private String  updateTime;
 
 }

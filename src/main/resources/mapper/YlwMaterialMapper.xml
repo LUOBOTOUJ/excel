@@ -2,5 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.acong.ssoserver.material.mapper.YlwMaterialMapper">
 
+    <insert id="insertReturnId" parameterType="com.acong.ssoserver.material.entity.YlwMaterial" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+insert into ylw_material(appearDate,brand,category,color,deleteStatus,isBatchManagement,materialCode,materialBarcode,materialName,materialSeries,materialType,newProduct,pattern,placeOfMaterialion,producerCode,productSeason,purchaseMeasurementUnit,substitute,supplierId,supplierName,weightPerMeter,weightPerSquareMeter,width,yarnCount,createTime,updateTime)
+  VALUES(#{appearDate},#{brand},#{category},#{color},#{deleteStatus},#{isBatchManagement},#{materialCode},#{materialBarcode},#{materialName},#{materialSeries},#{materialType},#{newProduct},#{pattern},#{placeOfMaterialion},#{producerCode},#{productSeason},#{purchaseMeasurementUnit},#{substitute},#{supplierId},#{supplierName},#{weightPerMeter},#{weightPerSquareMeter},#{width},#{yarnCount},#{createTime},#{updateTime})
+</insert>
 </mapper>
 

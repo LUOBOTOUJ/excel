@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,15 +39,40 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
+    /**
+     * 忽略拦截url或静态资源文件夹 - web.ignoring(): 会直接过滤该url - 将不会经过Spring Security过滤器链
+     * http.permitAll(): 不会绕开springsecurity验证，相当于是允许该路径通过
+     *
+     * @param web
+     * @throws Exception
+     */
+    @Override
+    public void configure(WebSecurity web)  {
+        //放行swagger
+        web.ignoring().antMatchers(HttpMethod.GET,
+                "/v2/api-docs",
+                "/swagger-resources",
+                "/swagger-resources/**",
+                "/configuration/ui",
+                "/configuration/security",
+                "/swagger-ui.html/**",
+                "/webjars/**");
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 // 测试用资源，需要验证了的用户才能访问
-                .antMatchers("/auth/**").permitAll()
-                // 其他都放行了
-                .antMatchers("/swagger-ui.html#/").permitAll()
+                .antMatchers(
+                        "/webjars/**",
+                        "/resources/**",
+                        "/swagger-ui.html",
+                        "/swagger-resources/**",
+                        "/auth/login","/auth/register")
+                .permitAll()
+                // 其他都拦截
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JWTAuthenticationFilter(authenticationManager()))

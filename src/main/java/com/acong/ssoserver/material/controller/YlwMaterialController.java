@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 
 /**
@@ -44,9 +45,9 @@ public class YlwMaterialController {
         YlwMaterial material = new YlwMaterial();
         BeanUtils.copyProperties(request,material);
         material.setDeleteStatus(DeleteStatus.DELETE_STATUS_NO.val());
-
-        if (!materialService.save(material)){
-            return ResultUtil.fail(CodeEnum.ERROR.val(),CodeEnum.ERROR.msg());
+        material.setCreateTime(LocalDateTime.now().toString());
+        if (materialMapper.insertReturnId(material) != 1){
+            return ResultUtil.fail("500","失败，请重试");
         }
         return ResultUtil.success(material,"添加成功");
     }
@@ -54,10 +55,14 @@ public class YlwMaterialController {
     @PostMapping("/material/update")
     @ApiOperation("修改物料信息")
     public ResultUtil update(@RequestBody MaterialRequest request){
-        YlwMaterial temp = new YlwMaterial();
+        YlwMaterial temp = materialService.getById(request.getId());
         BeanUtils.copyProperties(request,temp);
-        temp.setDeleteStatus(DeleteStatus.DELETE_STATUS_NO.val());
 
+        if (temp.getDeleteStatus() == DeleteStatus.DELETE_STATUS_YES.val()){
+            return ResultUtil.fail("500","已删除物料无法更新");
+        }
+        BeanUtils.copyProperties(request,temp);
+        temp.setUpdateTime(LocalDateTime.now().toString());
         if (!materialService.updateById(temp)){
             return ResultUtil.fail(CodeEnum.ERROR.val(),CodeEnum.ERROR.msg());
         }
@@ -68,6 +73,9 @@ public class YlwMaterialController {
     @ApiOperation("删除物料信息")
     public ResultUtil delete(@NotNull(message = "请选择") @PathVariable("id")Integer id){
         YlwMaterial temp = materialService.getById(id);
+        if (temp.getDeleteStatus() == DeleteStatus.DELETE_STATUS_YES.val()){
+            return ResultUtil.fail("500","该物料已删除，无法重复删除",temp);
+        }
         if (temp != null){
             temp.setDeleteStatus(DeleteStatus.DELETE_STATUS_YES.val());
         }
@@ -78,7 +86,7 @@ public class YlwMaterialController {
     }
 
     @GetMapping("/material/detail/{id}")
-    @ApiOperation("查询物料信息")
+    @ApiOperation("查询一个物料信息")
     public ResultUtil getOne(@NotNull(message = "请选择") @PathVariable("id")Integer id){
         QueryWrapper<YlwMaterial> queryWrapper = new QueryWrapper();
         queryWrapper.eq("deleteStatus",DeleteStatus.DELETE_STATUS_NO.val());
@@ -89,13 +97,16 @@ public class YlwMaterialController {
 
     @PostMapping("/material/all")
     @ApiOperation("分页查询全部信息")
-    public ResultUtil getAll(@RequestBody MaterialRequest request){
-        IPage<YlwMaterial> materialIPage = new Page<>(request.getCurrentPage(),request.getNum());
-        QueryWrapper<YlwMaterial> queryWrapper = new QueryWrapper();
-        queryWrapper.eq("deleteStatus",DeleteStatus.DELETE_STATUS_NO.val());
-        materialIPage = materialMapper.selectPage(materialIPage,queryWrapper);
-        materialIPage.isSearchCount();
-        return ResultUtil.success(materialIPage,"查询成功");
+    public ResultUtil getAll(@RequestBody(required = false) MaterialRequest request){
+        if (request.toString() != "" &&request.getCurrentPage() != null && request.getCurrentPage() != null){
+            IPage<YlwMaterial> materialIPage = new Page<>(request.getCurrentPage(),request.getNum());
+            QueryWrapper<YlwMaterial> queryWrapper = new QueryWrapper();
+            queryWrapper.eq("deleteStatus",DeleteStatus.DELETE_STATUS_NO.val());
+            materialIPage = materialMapper.selectPage(materialIPage,queryWrapper);
+            materialIPage.isSearchCount();
+            return ResultUtil.success(materialIPage,"查询成功");
+        }
+        return ResultUtil.fail("500","请输入currentPage和num");
     }
 }
 
