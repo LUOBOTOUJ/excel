@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 
+
 @Data
 @ApiModel("物料管理")
 public class MaterialRequest {

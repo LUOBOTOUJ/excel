@@ -12,9 +12,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -41,7 +41,7 @@ public class YlwMaterialController {
 
     @PostMapping("/material/add")
     @ApiOperation("新增物料")
-    public ResultUtil add(@RequestBody @Validated MaterialRequest request) {
+    public ResultUtil add(@RequestBody MaterialRequest request) {
         YlwMaterial material = new YlwMaterial();
         BeanUtils.copyProperties(request,material);
         material.setDeleteStatus(DeleteStatus.DELETE_STATUS_NO.val());
@@ -54,7 +54,9 @@ public class YlwMaterialController {
 
     @PostMapping("/material/update")
     @ApiOperation("修改物料信息")
-    public ResultUtil update(@RequestBody MaterialRequest request){
+    @ApiParam("物料id")
+    public ResultUtil update(@RequestBody  MaterialRequest request){
+
         YlwMaterial temp = materialService.getById(request.getId());
         BeanUtils.copyProperties(request,temp);
 
@@ -97,6 +99,7 @@ public class YlwMaterialController {
 
     @PostMapping("/material/all")
     @ApiOperation("分页查询全部信息")
+    @ApiParam("currentPage"+"num")
     public ResultUtil getAll(@RequestBody(required = false) MaterialRequest request){
         if (request.toString() != "" &&request.getCurrentPage() != null && request.getCurrentPage() != null){
             IPage<YlwMaterial> materialIPage = new Page<>(request.getCurrentPage(),request.getNum());
