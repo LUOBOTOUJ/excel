@@ -35,9 +35,6 @@ public class PoRequest implements Serializable {
     @NotBlank(message = "请输入预收货清单编码", groups = {Insert.class,Update.class, Delete.class})
     private String prepareReceiptCode;
 
-    @ApiModelProperty(value = "接受交期", dataType="Date")
-    //@NotNull(message = "请选择接受交期", groups = {Insert.class,Update.class, Delete.class})
-    private String offeredDate;
 
     @ApiModelProperty(value = "供应商编码", dataType="String")
     //@NotBlank(message = "请输入供应商编码", groups = {Insert.class})

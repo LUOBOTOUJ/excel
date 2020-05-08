@@ -36,7 +36,7 @@ public class TranController {
 
 
     @PostMapping("/tran/add")
-    @ApiOperation("新增销售单")
+    @ApiOperation("新增转储单")
     public ResultUtil add(@RequestBody @Validated({Insert.class}) TranRequest request) {
         Tran tran = new Tran();
         BeanUtils.copyProperties(request,tran);

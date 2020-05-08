@@ -20,6 +20,10 @@ public class PoDetailRequest implements Serializable {
     //@NotBlank(message = "请输入销售订单ID", groups = {Insert.class})
     private String salesOrderId;
 
+    @ApiModelProperty(value = "接受交期", dataType="Date")
+    //@NotNull(message = "请选择接受交期", groups = {Insert.class,Update.class, Delete.class})
+    private String offeredDate;
+
     @ApiModelProperty(value = "采购类型，需求来源", dataType="String")
     //@NotBlank(message = "请输入采购类型，需求来源", groups = {Insert.class})
     private String purchaseType;

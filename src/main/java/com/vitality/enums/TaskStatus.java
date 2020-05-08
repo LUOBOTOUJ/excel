@@ -1,12 +1,12 @@
 package com.vitality.enums;
 
-public enum DeleteStatus {
-    DELETE_STATUS_YES("I","已删除"),
+public enum TaskStatus {
+    DELETE_STATUS_YES("N","未同步"),
 
     /** 操作失败 */
-    DELETE_STATUS_NO("A", "未删除");
+    DELETE_STATUS_NO("P", "已同步");
 
-    DeleteStatus(String value, String msg){
+    TaskStatus(String value, String msg){
         this.val = value;
         this.msg = msg;
     }

@@ -44,7 +44,7 @@ Release – 解除
      * 销售订单编号
      */
     @TableField("saleOrderId")
-    private Integer saleOrderId;
+    private String saleOrderId;
 
     /**
      * 预留开始时间

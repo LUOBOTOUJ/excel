@@ -37,12 +37,6 @@ public class Po extends Model<Po> {
     private String prepareReceiptCode;
 
     /**
-     * 接受交期
-     */
-    @TableField("offeredDate")
-    private String offeredDate;
-
-    /**
      * 供应商编码
      */
     @TableField("supplierCode")

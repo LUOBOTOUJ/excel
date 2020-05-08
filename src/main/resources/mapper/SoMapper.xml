@@ -3,23 +3,22 @@
 <mapper namespace="com.vitality.material.mapper.SoMapper">
 
     <insert id="insertReturnId" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
-    insert into tbl_imp_so(salesOrderID,saleType,businessType,
-    saleChanceCode,customerCode,customerName,customerContactName,customerContactTitle,
-    customerContactPhone,customerContactOfficeTel,customerContactFixedTel,
-    customerContactFax,customerContactEmail,customerAddressCountry,customerAddressProvince,
-    customerAddressCity,customerAddressDistrict,customerAddressDetails,
-    customerAddressPostCode,customerAddressRemarks,orderStatus,orderTime,
-    lastDeliveryDate,payType,currency,exchangeRate,needInvoice,invoiceTitle,
-    invoiceContactName,invoiceContactTitle,invoiceContactPhone,invoiceContactOfficeTel,
-    invoiceContactFixedTel,invoiceContactFax,invoiceContactEmail,invoiceAddressCountry
+    insert into tbl_imp_so(salesOrderID,saleType,businessType,saleChanceCode,customerCode,customerName,customerContactName,customerContactTitle
+    ,customerContactPhone,customerContactOfficeTel,customerContactFixedTel
+    ,customerContactFax,customerContactEmail,customerAddressCountry,customerAddressProvince
+    ,customerAddressCity,customerAddressDistrict,customerAddressDetails
+    ,customerAddressPostCode,customerAddressRemarks,orderStatus,orderTime
+    ,lastDeliveryDate,payType,currency,exchangeRate,needInvoice,invoiceTitle
+    ,invoiceContactName,invoiceContactTitle,invoiceContactPhone,invoiceContactOfficeTel
+    ,invoiceContactFixedTel,invoiceContactFax,invoiceContactEmail,invoiceAddressCountry
     ,invoiceAddressProvince,invoiceAddressCity,invoiceAddressDistrict,invoiceAddressDetails
     ,invoiceAddressPostCode,invoiceAddressRemarks,channel,totalAmountForeign,remarks
-    ,totalAmountRmb,createDate,deleteStatus)
-    values (#{salesOrderID},#{saleType},#{businessType},#{saleChanceCode},#{customerCode},#{customerName},#{customerContactName},#{customerContactTitle},#{
-    customerContactPhone},#{customerContactOfficeTel},#{customerContactFixedTel},#{customerContactFax},#{customerContactEmail},#{customerAddressCountry},#{customerAddressProvince},#{
-    customerAddressCity},#{customerAddressDistrict},#{customerAddressDetails},#{customerAddressPostCode},#{customerAddressRemarks},#{orderStatus},#{orderTime},
-    #{lastDeliveryDate},#{payType},#{currency},#{exchangeRate},#{needInvoice},#{invoiceTitle},
-    #{invoiceContactName},#{invoiceContactTitle},#{invoiceContactPhone},#{invoiceContactOfficeTel},
-    #{invoiceContactFixedTel},#{invoiceContactFax},#{invoiceContactEmail},#{invoiceAddressCountry},#{invoiceAddressProvince},#{invoiceAddressCity},#{invoiceAddressDistrict},#{invoiceAddressDetails},#{invoiceAddressPostCode},#{invoiceAddressRemarks},#{channel},#{totalAmountForeign},#{remarks},#{totalAmountRmb},#{createDate},#{deleteStatus)
+    ,totalAmountRmb,create_date,deleteStatus)
+    values (#{salesOrderID},#{saleType},#{businessType},#{saleChanceCode},#{customerCode},#{customerName},#{customerContactName},#{customerContactTitle}
+    ,#{customerContactPhone},#{customerContactOfficeTel},#{customerContactFixedTel},#{customerContactFax},#{customerContactEmail},#{customerAddressCountry},#{customerAddressProvince}
+    ,#{customerAddressCity},#{customerAddressDistrict},#{customerAddressDetails},#{customerAddressPostCode},#{customerAddressRemarks},#{orderStatus},#{orderTime}
+    ,#{lastDeliveryDate},#{payType},#{currency},#{exchangeRate},#{needInvoice},#{invoiceTitle}
+    ,#{invoiceContactName},#{invoiceContactTitle},#{invoiceContactPhone},#{invoiceContactOfficeTel}
+    ,#{invoiceContactFixedTel},#{invoiceContactFax},#{invoiceContactEmail},#{invoiceAddressCountry},#{invoiceAddressProvince},#{invoiceAddressCity},#{invoiceAddressDistrict},#{invoiceAddressDetails},#{invoiceAddressPostCode},#{invoiceAddressRemarks},#{channel},#{totalAmountForeign},#{remarks},#{totalAmountRmb},#{createDate},#{deleteStatus})
     </insert>
 </mapper>

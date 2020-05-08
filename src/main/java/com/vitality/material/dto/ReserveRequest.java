@@ -35,7 +35,7 @@ public class ReserveRequest implements Serializable {
 
     @ApiModelProperty("销售订单编号")
     //@NotNull(message = "请选择销售订单编号", groups = {Insert.class})
-    private Integer saleOrderId;
+    private String saleOrderId;
 
     @ApiModelProperty("预留开始时间")
     //@NotBlank(message = "请输入预留开始时间", groups = {Insert.class})

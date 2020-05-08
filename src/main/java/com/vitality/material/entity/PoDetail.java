@@ -29,6 +29,12 @@ public class PoDetail extends Model<PoDetail> {
     private String salesOrderId;
 
     /**
+     * 接受交期
+     */
+    @TableField("offeredDate")
+    private String offeredDate;
+
+    /**
      * 采购类型，需求来源
      */
     @TableField("purchase_type")
