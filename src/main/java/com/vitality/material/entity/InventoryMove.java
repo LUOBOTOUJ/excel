@@ -6,12 +6,13 @@ import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 
 @Data
 @TableName("tbl_inf_exp_inv_movement")
 public class InventoryMove extends Model<InventoryMove> {
     private static final long serialVersionUID = 1L;
+
 
     @TableField("uuID")
     private Integer uuid;
@@ -47,7 +48,7 @@ public class InventoryMove extends Model<InventoryMove> {
     private String status;
 
     @TableField("updateDate")
-    private Date updateDate;
+    private java.util.Date updateDate;
 
     @TableField("updateUser")
     private String updateUser;

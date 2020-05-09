@@ -13,5 +13,5 @@ import com.vitality.material.entity.InventoryMove;
  * @since 2020-04-22
  */
 public interface InventoryMoveMapper extends BaseMapper<InventoryMove> {
-    void updateStatus(InventoryMove inventoryMove);
+    boolean updateStatus(InventoryMove inventoryMove);
 }

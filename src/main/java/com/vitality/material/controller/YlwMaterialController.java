@@ -37,6 +37,7 @@ public class YlwMaterialController {
     @PostMapping("/material/add")
     @ApiOperation("新增物料")
     public ResultUtil add(@RequestBody @Validated({Insert.class}) MaterialRequest request) {
+
         YlwMaterial material = new YlwMaterial();
         BeanUtils.copyProperties(request,material);
         material.setCreateTime(Timestamp.valueOf(LocalDateTime.now()));

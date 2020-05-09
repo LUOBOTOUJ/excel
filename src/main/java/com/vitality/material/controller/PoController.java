@@ -46,17 +46,21 @@ public class PoController {
         Po po = new Po();
         BeanUtils.copyProperties(request,po);
         po.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+
         if (poMapper.insertReturnId(po) != 1){
             return ResultUtil.fail("500","保存失败",po);
         }
+
         for (PoDetailRequest poDetailRequest:request.getPoDetailRequests()){
             PoDetail poDetail = new PoDetail();
             BeanUtils.copyProperties(poDetailRequest,poDetail);
             poDetail.setBelongId(po.getId());
             poDetail.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+
             if (!poDetailService.save(poDetail)){
                 return ResultUtil.fail("500","保存失败",poDetail);
             }
+
         }
         return ResultUtil.success(request,"添加成功");
     }

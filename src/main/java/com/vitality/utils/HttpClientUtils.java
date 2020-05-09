@@ -3,7 +3,6 @@ package com.vitality.utils;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.time.LocalDate;
 import java.util.*;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
@@ -38,6 +37,7 @@ public class HttpClientUtils {
     private static SSLConnectionSocketFactory sslConnectionSocketFactory;
     private static RequestConfig config;
     private String accessToken = null;
+
     private static Logger log = LoggerFactory.getLogger(HttpClientUtils.class);
 
     public String getAccessToken() {
@@ -184,7 +184,7 @@ public class HttpClientUtils {
             // 从响应模型中获取响应实体
             HttpEntity responseEntity = response.getEntity();
 
-            System.out.println("响应状态为:" + response.getStatusLine());
+            //System.out.println("响应状态为:" + response.getStatusLine());
             if (responseEntity != null) {
                 result = EntityUtils.toString(responseEntity);
             }

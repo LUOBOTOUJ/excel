@@ -15,5 +15,4 @@ import org.springframework.stereotype.Repository;
  */
 @Repository(value = "CutMapper")
 public interface CutMapper extends BaseMapper<Cut> {
-    void updateStatus(Cut cut);
 }

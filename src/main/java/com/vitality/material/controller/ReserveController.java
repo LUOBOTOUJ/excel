@@ -1,12 +1,8 @@
 package com.vitality.material.controller;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.vitality.material.dto.ReserveRequest;
-import com.vitality.material.dto.TranRequest;
 import com.vitality.material.entity.Reserve;
-import com.vitality.material.entity.Tran;
 import com.vitality.material.service.IReserveService;
-import com.vitality.material.service.ITranService;
 import com.vitality.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
