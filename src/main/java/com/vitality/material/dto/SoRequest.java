@@ -182,7 +182,8 @@ public class SoRequest implements Serializable {
     @ApiModelProperty(value = "", dataType="Date")
     private Date createDate;
 
-    @ApiModelProperty(value = "预收货单明细",dataType = "List")
+    @ApiModelProperty(value = "销售单明细",dataType = "List")
+    @NotNull(message = "请选择销售单明细",groups = {Insert.class})
     private ArrayList<SoDetailRequest> soDetailRequests;
 
 }

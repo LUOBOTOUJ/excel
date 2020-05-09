@@ -5,14 +5,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.sql.Date;
 
 @Data
 @TableName("inf_exp_inv_adjustment")
 public class InventoryAdjust {
     private static final long serialVersionUID = 1L;
-    @TableField("uuID")
-    private Integer uuid;
+    @TableField("id")
+    private Integer id;
 
     @TableField("adjustDate")
     private Date adjustDate;
@@ -27,22 +27,22 @@ public class InventoryAdjust {
     private String materialCode;
 
     @TableField("batchNumber")
-    private String uselessNumber;
-
-    @TableField("hjBatchNumber")
     private String batchNumber;
 
+    @TableField("hjBatchNumber")
+    private String hjBatchNumber;
+
     @TableField("adjustQuantity")
-    private BigDecimal moveQuantity;
+    private BigDecimal adjustQuantity;
 
     @TableField("adjustUser")
-    private String moveUser;
+    private String adjustUser;
 
     @TableField("status")
     private String status;
 
     @TableField("updateDate")
-    private Date updateDate;
+    private java.util.Date updateDate;
 
     @TableField("updateUser")
     private String updateUser;

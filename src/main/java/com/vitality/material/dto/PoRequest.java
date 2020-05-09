@@ -56,5 +56,6 @@ public class PoRequest implements Serializable {
     private Date createDate;
 
     @ApiModelProperty(value = "预收货单明细",dataType = "List")
+    @NotNull(message = "请选择预收货单明细",groups = {Insert.class})
     private ArrayList<PoDetailRequest> poDetailRequests;
 }
