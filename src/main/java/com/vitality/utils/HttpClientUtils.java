@@ -29,13 +29,32 @@ import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 
+/**
+ *
+ * HTTPClient工具类
+ * 获取token
+ * 访问post请求
+ * 带query参数、带Header认证、带json参数
+ * @author 江越天
+ * @date 2020-05-11 12:11
+ * @param
+ * @return
+ */
 public class HttpClientUtils {
     private static final String CHARSET = "utf-8";
     private static final String CONTENT_TYPE_TEXT_JSON = "text/json";
+
+    /**
+     * Header参数
+     */
     private static final String Authorization = "Authorization";
 
     private static SSLConnectionSocketFactory sslConnectionSocketFactory;
     private static RequestConfig config;
+
+    /**
+     * 单例实现token
+     */
     private String accessToken = null;
 
     private static Logger log = LoggerFactory.getLogger(HttpClientUtils.class);
@@ -70,6 +89,10 @@ public class HttpClientUtils {
         config = RequestConfig.custom().setConnectTimeout(10000000).setSocketTimeout(10000000).build();
     }
 
+    /**
+     * 获取token
+     * @return
+     */
     public boolean instanceTargetToken() {
         if (accessToken == null) {
             try {
@@ -93,7 +116,11 @@ public class HttpClientUtils {
         return true;
     }
 
-    private Map<String, String> getTargetParams() {
+    /**
+     * 登录接口参数
+     * @return
+     */
+    public Map<String, String> getTargetParams() {
         Map<String, String> targetParamsMap = new HashMap<String, String>();
         try {
 
@@ -151,7 +178,7 @@ public class HttpClientUtils {
 
     /**
      * POST---有参(普通参数 + 对象参数)
-     *
+     * query参数放入url中处理即可
      * @date
      */
     public String doPost(String url,String token,Map<String,Object> params) {
