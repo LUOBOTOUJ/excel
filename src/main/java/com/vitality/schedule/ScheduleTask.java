@@ -196,7 +196,7 @@ public  class ScheduleTask {
                     object.put("inventory",cut.getNewInventory());
                     object.put("quantity",cut.getNewQty());
                     object.put("subInventory",cut.getNewSubInventory());
-                    object.put("uuid",UUID.randomUUID().toString().replaceAll("-",""));
+                    //object.put("uuid",UUID.randomUUID().toString().replaceAll("-",""));
                     newBatchList.add(object);
                 }
 
@@ -254,17 +254,17 @@ public  class ScheduleTask {
 
             HttpClientUtils httpClientUtils = new HttpClientUtils();
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-            String url = "https://api.vitalitytex.com.cn/inventory/inventory/v1/interTransfer?actionType=warehouseAllocation";
+            String url = "https://api.vitalitytex.com.cn/inventory/inventory/v1/adjustInventory";
 
             Map<String,Object> params = new HashMap<>();
             params.put("inventory", inventoryAdjust.getInventory());
             params.put("materialCode", inventoryAdjust.getMaterialCode());
-            params.put("meter", inventoryAdjust.getAdjustQuantity());
+            params.put("adjustQuantity", inventoryAdjust.getAdjustQuantity());
             params.put("recordUuid", inventoryAdjust.getId());
             params.put("subInventory", inventoryAdjust.getSubInv());
             params.put("uuid", uuid);
-            params.put("validDate", inventoryAdjust.getAdjustDate().toString());
-            params.put("batchNo", inventoryAdjust.getHjBatchNumber());
+            params.put("adjustDate", inventoryAdjust.getAdjustDate().toString());
+            params.put("batchNumber", inventoryAdjust.getHjBatchNumber());
 
             String token = null;
             if (instanceTargetToken()) {
@@ -334,7 +334,7 @@ public  class ScheduleTask {
                     inventoryAdjust.setStatus(TaskStatus.DELETE_STATUS_NO.val());
                     inventoryAdjust.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
                     if (!adjustmentService.updateById(inventoryAdjust)){
-                        log.error("库存调整定时任务状态更新失败！");
+                        log.error("库存调整定时任务状态更新失败！"+"params:"+inventoryAdjust);
                     }
                 } else {
                     log.error("错误信息:" + result);
