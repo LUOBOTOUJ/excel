@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 /**
  *  前端控制器
@@ -50,7 +51,6 @@ public class PoController {
         if (poMapper.insertReturnId(po) != 1){
             return ResultUtil.fail("500","保存失败",po);
         }
-
         for (PoDetailRequest poDetailRequest:request.getPoDetailRequests()){
             PoDetail poDetail = new PoDetail();
             BeanUtils.copyProperties(poDetailRequest,poDetail);

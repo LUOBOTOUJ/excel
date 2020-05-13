@@ -4,4 +4,8 @@
     <update id="updateStatus" parameterType="com.vitality.material.entity.InventoryMove">
         update tbl_inf_exp_inv_movement set status = 'P',updateDate = #{updateDate}  where uuID = #{uuid}
     </update>
+
+    <select id="selectReceiptPrint" parameterType="string" resultType="hashmap">
+      select top 1 * from tbl_print_queue where print_type = 'Receipt Label' and print_status = 'N' order by create_date
+    </select>
 </mapper>

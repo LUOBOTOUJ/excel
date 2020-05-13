@@ -196,7 +196,7 @@ public class HttpClientUtils {
         //UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList);
         // 将user对象转换为json字符串，并放入entity中
         StringEntity entity = new StringEntity(jsonObject.toJSONString(), ContentType.APPLICATION_JSON);
-
+        log.info(jsonObject.toJSONString());
         // post请求是将参数放在请求体里面传过去的;这里将entity放入post请求体中
         httpPost.setEntity(entity);
 

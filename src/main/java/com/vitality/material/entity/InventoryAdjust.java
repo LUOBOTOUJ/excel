@@ -8,11 +8,14 @@ import java.math.BigDecimal;
 import java.sql.Date;
 
 @Data
-@TableName("inf_exp_inv_adjustment")
+@TableName("tbl_inf_exp_inv_adjustment")
 public class InventoryAdjust {
     private static final long serialVersionUID = 1L;
     @TableField("id")
     private Integer id;
+
+    @TableField(value = "control_number")
+    private String controlNumber;
 
     @TableField("adjustDate")
     private Date adjustDate;

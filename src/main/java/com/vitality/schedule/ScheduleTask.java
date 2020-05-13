@@ -11,16 +11,6 @@ import com.vitality.material.service.ICutService;
 import com.vitality.material.service.IInventoryAdjustmentService;
 import com.vitality.material.service.IInventoryMoveService;
 import com.vitality.utils.HttpClientUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -28,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -65,7 +54,7 @@ public  class ScheduleTask {
      * 定时任务时间设置 s m h d m y
      * @return void
      */
-    @Scheduled(cron = "0/5 * * * * ?")
+    //@Scheduled(cron = "0/5 * * * * ?")
     @Async
     public void scheduledInventoryMove(){
 
@@ -151,6 +140,8 @@ public  class ScheduleTask {
                     inventoryMove.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
                     if (!moveMapper.updateStatus(inventoryMove)){
                         log.error("库存转移定时任务状态更新失败！");
+                    }else {
+                        log.info("库存转移操作成功"+params.toString());
                     }
                 } else {
                     log.error("错误信息:" + result);
@@ -159,11 +150,13 @@ public  class ScheduleTask {
                 log.error(e.getMessage());
             }
 
+        }else {
+            log.info("暂无库存转移任务");
         }
-        log.info("暂无库存转移任务");
+
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")  //定时任务时间设置 s m h d m y
+    //@Scheduled(cron = "0/5 * * * * ?")  //定时任务时间设置 s m h d m y
     @Async
     public void scheduledCut(){
         log.info("裁剪定时任务开启"+LocalDateTime.now().toString());
@@ -224,6 +217,8 @@ public  class ScheduleTask {
 
                             if (!cutService.updateById(cut1)){
                                 log.error("裁剪定时任务状态更新失败！"+cut1.toString());
+                            }else {
+                                log.info("裁剪定时任务操作成功"+params.toString());
                             }
 
                         }
@@ -233,12 +228,14 @@ public  class ScheduleTask {
                 }catch (Exception e){
                     log.error(e.getMessage());
                 }
+            }else {
+                log.info("暂无裁剪任务");
             }
-            log.info("暂无裁剪任务");
+
         }
     }
 
-    @Scheduled(cron = "0/5 * * * * ?")  //定时任务时间设置 s m h d m y
+    //@Scheduled(cron = "0/5 * * * * ?")  //定时任务时间设置 s m h d m y
     @Async
     public void scheduledInventoryAdjust(){
 
@@ -253,18 +250,21 @@ public  class ScheduleTask {
             InventoryAdjust inventoryAdjust = inventoryAdjustList.get(0);
 
             HttpClientUtils httpClientUtils = new HttpClientUtils();
-            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-            String url = "https://api.vitalitytex.com.cn/inventory/inventory/v1/adjustInventory";
+            //String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            String url = "https://api.vitalitytex.com.cn/voucher/voucher/v1/vouchers";
 
             Map<String,Object> params = new HashMap<>();
-            params.put("inventory", inventoryAdjust.getInventory());
-            params.put("materialCode", inventoryAdjust.getMaterialCode());
-            params.put("adjustQuantity", inventoryAdjust.getAdjustQuantity());
-            params.put("recordUuid", inventoryAdjust.getId());
-            params.put("subInventory", inventoryAdjust.getSubInv());
-            params.put("uuid", uuid);
-            params.put("adjustDate", inventoryAdjust.getAdjustDate().toString());
-            params.put("batchNumber", inventoryAdjust.getHjBatchNumber());
+            params.put("uuid", UUID.randomUUID().toString().replaceAll("-",""));
+            params.put("voucherCode", inventoryAdjust.getControlNumber());
+            params.put("voucherType", "StockAdjust");
+            JSONObject object = new JSONObject();
+            object.put("adjustDate",inventoryAdjust.getAdjustDate().toString());
+            object.put("inventory",inventoryAdjust.getInventory());
+            object.put("subInventory",inventoryAdjust.getSubInv());
+            object.put("materialCode",inventoryAdjust.getMaterialCode());
+            object.put("hjBatchNumber",inventoryAdjust.getHjBatchNumber());
+            object.put("adjustQuantity",inventoryAdjust.getAdjustQuantity());
+            params.put("voucherInfo",object.toJSONString());
 
             String token = null;
             if (instanceTargetToken()) {
@@ -277,64 +277,15 @@ public  class ScheduleTask {
 
             try {
                 log.info("params:" + params.toString());
-
-                // 获得Http客户端(可以理解为:你得先有一个浏览器;注意:实际上HttpClient与浏览器是不一样的)
-                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-                HttpPost httpPost = new HttpPost(url);
-                // 创建json参数
-                JSONObject jsonObject = new JSONObject();
-                for (String key:params.keySet()){
-                    jsonObject.put(key,params.get(key));
-                }
-
-                // 模拟表单
-                //UrlEncodedFormEntity entity = new UrlEncodedFormEntity(paramList);
-                // 将user对象转换为json字符串，并放入entity中
-                StringEntity entity = new StringEntity(jsonObject.toJSONString(), ContentType.APPLICATION_JSON);
-
-                // post请求是将参数放在请求体里面传过去的;这里将entity放入post请求体中
-                httpPost.setEntity(entity);
-
-                httpPost.setHeader("Content-Type", "application/json;charset=utf8");
-                httpPost.setHeader(Authorization, "Bearer " + token);
-                // 响应模型
-                CloseableHttpResponse response = null;
-                String result = null;
-                try {
-                    // 由客户端执行(发送)Post请求
-                    response = httpClient.execute(httpPost);
-                    // 从响应模型中获取响应实体
-                    HttpEntity responseEntity = response.getEntity();
-
-                    //System.out.println("响应状态为:" + response.getStatusLine());
-                    if (responseEntity != null) {
-                        result = EntityUtils.toString(responseEntity);
-                    }
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        // 释放资源
-                        if (httpClient != null) {
-                            httpClient.close();
-                        }
-                        if (response != null) {
-                            response.close();
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                String result = httpClientUtils.doPost(url, token, params);
                 if (result.contains("操作成功")) {
                     inventoryAdjust.setStatus(TaskStatus.DELETE_STATUS_NO.val());
                     inventoryAdjust.setUpdateDate(Timestamp.valueOf(LocalDateTime.now()));
+
                     if (!adjustmentService.updateById(inventoryAdjust)){
                         log.error("库存调整定时任务状态更新失败！"+"params:"+inventoryAdjust);
+                    }else {
+                        log.info("库存调整操作成功"+params.toString());
                     }
                 } else {
                     log.error("错误信息:" + result);
@@ -342,9 +293,10 @@ public  class ScheduleTask {
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
-
+        }else {
+            log.info("暂无库存调整任务");
         }
-        log.info("暂无库存调整任务");
+
     }
 
     public boolean instanceTargetToken() {
@@ -368,5 +320,30 @@ public  class ScheduleTask {
             return true;
         }
         return true;
+    }
+
+    /**
+     *
+     *
+     * @author 江越天
+     * @date 2020-05-13 16:38
+     * @param
+     * @return 收货标签打印
+     */
+    //@Scheduled(cron = "0/3 * * * * ?")
+    @Async
+    public void receiptPrint(){
+        StringBuffer poNum = new StringBuffer();
+        StringBuffer lotNum = new StringBuffer();
+        Map<String,Object> receiptMap = moveMapper.selectReceiptPrint();
+        JSONObject printParam = JSONObject.parseObject(receiptMap.get("print_param").toString());
+        if (printParam.containsKey("po_number")){
+            poNum.append(printParam.get("po_number"));
+        }else if(printParam.containsKey("lot_number")){
+            lotNum.append(printParam.get("lot_number"));
+        }
+        log.info(poNum.toString());
+        log.info(lotNum.toString());
+
     }
 }
