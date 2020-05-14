@@ -7,10 +7,12 @@ import com.vitality.material.entity.Cut;
 import com.vitality.material.entity.InventoryAdjust;
 import com.vitality.material.entity.InventoryMove;
 import com.vitality.material.mapper.InventoryMoveMapper;
+import com.vitality.material.mapper.PoMapper;
 import com.vitality.material.service.ICutService;
 import com.vitality.material.service.IInventoryAdjustmentService;
 import com.vitality.material.service.IInventoryMoveService;
 import com.vitality.utils.HttpClientUtils;
+import org.hibernate.annotations.Source;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,6 +30,8 @@ import java.util.*;
 public  class ScheduleTask {
     private static Logger log = LoggerFactory.getLogger(ScheduleTask.class);
 
+    @Resource
+    private PoMapper poMapper;
     @Autowired
     private InventoryMoveMapper moveMapper;
     @Autowired
@@ -42,6 +48,7 @@ public  class ScheduleTask {
     //定时任务时间设置 s m h d m y
 
     /**
+     * 库存转移
      * 根据时间顺序排序
      * 优先处理状态为N，即未处理的数据
      * 处理完状态置为P
@@ -89,7 +96,7 @@ public  class ScheduleTask {
              * 第三方接口路径
              * query参数从路径中传
              */
-            String url = "https://api.vitalitytex.com.cn/inventory/inventory/v1/interTransfer?actionType=warehouseAllocation";
+            String url = "https://api.vitalitytex.com.cn/voucher/voucher/v1/vouchers";
 
 
             /**
@@ -97,16 +104,23 @@ public  class ScheduleTask {
              * 时间以sql.Date格式
              */
             Map params = new HashMap<>();
-            params.put("inventory", inventoryMove.getToInventory());
-            params.put("materialCode", inventoryMove.getMaterialCode());
-            params.put("meter", inventoryMove.getMoveQuantity());
-            params.put("outInventory", inventoryMove.getFromInventory());
-            params.put("outSubInventory", inventoryMove.getFromSubInv());
-            params.put("recordUuid", inventoryMove.getUuid());
-            params.put("subInventory", inventoryMove.getToSubInv());
-            params.put("uuid", uuid);
-            params.put("validDate", inventoryMove.getMoveDate().toString());
-            params.put("batchNo", inventoryMove.getBatchNumber());
+            params.put("uuid",uuid);
+            params.put("voucherCode", inventoryMove.getUuid());
+            params.put("voucherType", "StockMove");
+
+            JSONObject object = new JSONObject();
+
+            object.put("inventory", inventoryMove.getInventory());
+            object.put("materialCode", inventoryMove.getMaterialCode());
+            object.put("moveQty", inventoryMove.getMoveQuantity());
+            object.put("subInventory", inventoryMove.getSubInv());
+            object.put("recordUuid", inventoryMove.getUuid());
+            object.put("moveDate", inventoryMove.getMoveDate().toString());
+            params.put("moveType", inventoryMove.getMoveType());
+
+            object.put("batchNo", inventoryMove.getBatchNumber());
+
+            params.put("voucherInfo",object.toJSONString());
 
             /**
              * 调用工具类
@@ -156,7 +170,15 @@ public  class ScheduleTask {
 
     }
 
-    //@Scheduled(cron = "0/5 * * * * ?")  //定时任务时间设置 s m h d m y
+    /**
+     *
+     *
+     * @author 江越天
+     * @date 2020-05-14 14:25
+     *  裁剪
+     * @return void
+     */
+    @Scheduled(cron = "0/5 * * * * ?")  //定时任务时间设置 s m h d m y
     @Async
     public void scheduledCut(){
         log.info("裁剪定时任务开启"+LocalDateTime.now().toString());
@@ -166,7 +188,6 @@ public  class ScheduleTask {
         List<Cut> cutList = cutService.list(queryWrapper);
         if (0 != cutList.size()){
             String oldLotNum = cutList.get(0).getSourceLotNumber();
-
             QueryWrapper queryWrapper1 = new QueryWrapper<Cut>();
             queryWrapper1.eq("source_lot_number",oldLotNum);
             queryWrapper1.eq("status","N");
@@ -175,28 +196,33 @@ public  class ScheduleTask {
             if (!list.isEmpty()){
 
                 Map params = new HashMap<>();
-                params.put("batchNo",oldLotNum);
-                params.put("inventory",cutList.get(0).getFromInventory());
-                params.put("materialCode",cutList.get(0).getItemNumber());
-                params.put("subInventory",cutList.get(0).getFromSubInventory());
-                params.put("uuid",cutList.get(0).getId());
+                params.put("uuid", UUID.randomUUID().toString().replaceAll("-",""));
+                params.put("voucherCode", cutList.get(0).getId());
+                params.put("voucherType", "Cut");
+
+                JSONObject jsonObject = new JSONObject();
+
+                jsonObject.put("batchNo",oldLotNum);
+                jsonObject.put("inventory",cutList.get(0).getFromInventory());
+                jsonObject.put("materialCode",cutList.get(0).getItemNumber());
+                jsonObject.put("subInventory",cutList.get(0).getFromSubInventory());
+                jsonObject.put("sourceQty",cutList.get(0).getSourceQty());
 
                 List newBatchList = new ArrayList();
-
-                for (Cut cut:list){
+                list.forEach(cut->{
                     JSONObject object = new JSONObject();
-                    object.put("batchNo",cut.getNewLotNumber());
-                    object.put("inventory",cut.getNewInventory());
-                    object.put("quantity",cut.getNewQty());
-                    object.put("subInventory",cut.getNewSubInventory());
-                    //object.put("uuid",UUID.randomUUID().toString().replaceAll("-",""));
+                    object.put("newLotNumber",cut.getNewLotNumber());
+                    object.put("newInventory",cut.getNewInventory());
+                    object.put("newQuantity",cut.getNewQty());
+                    object.put("newSubInventory",cut.getNewSubInventory());
                     newBatchList.add(object);
-                }
+                });
 
-                params.put("newBatchList",newBatchList);
+                jsonObject.put("newBatchList",newBatchList);
+                params.put("voucherInfo",jsonObject.toJSONString());
 
                 HttpClientUtils httpClientUtils = new HttpClientUtils();
-                String url = "https://api.vitalitytex.com.cn/inventory/inventory/v1/cut";
+                String url = "https://api.vitalitytex.com.cn/voucher/voucher/v1/vouchers";
                 String token = null;
                 if (httpClientUtils.instanceTargetToken()){
                     token = httpClientUtils.getAccessToken();
@@ -229,12 +255,21 @@ public  class ScheduleTask {
                     log.error(e.getMessage());
                 }
             }else {
-                log.info("暂无裁剪任务");
+                log.info("数据异常");
             }
-
+        }else {
+            log.info("暂无裁剪任务");
         }
     }
 
+    /**
+     *
+     *
+     * @author 江越天
+     * @date 2020-05-14 14:25
+     * 库存调整
+     * @return void
+     */
     //@Scheduled(cron = "0/5 * * * * ?")  //定时任务时间设置 s m h d m y
     @Async
     public void scheduledInventoryAdjust(){
@@ -255,7 +290,7 @@ public  class ScheduleTask {
 
             Map<String,Object> params = new HashMap<>();
             params.put("uuid", UUID.randomUUID().toString().replaceAll("-",""));
-            params.put("voucherCode", inventoryAdjust.getControlNumber());
+            params.put("voucherCode", inventoryAdjust.getId());
             params.put("voucherType", "StockAdjust");
             JSONObject object = new JSONObject();
             object.put("adjustDate",inventoryAdjust.getAdjustDate().toString());
@@ -346,4 +381,47 @@ public  class ScheduleTask {
         log.info(lotNum.toString());
 
     }
+
+    @Scheduled(cron = "0/3 * * * * ?")
+    @Async
+    public void receiptInfo(){
+        HashMap<String,Object> receiptInfo = poMapper.selectReceiptInfo();
+        JSONObject object = new JSONObject();
+        HashMap<String,Object> params = new HashMap<>();
+        receiptInfo.forEach(
+                (k,v)->{ object.put(k,v); }
+                );
+        if (!object.containsKey("receipt_ID") ||
+                !object.containsKey("receipt_Date")||
+                !object.containsKey("wh_id")||
+                !object.containsKey("item_number")||
+                !object.containsKey("po_number")||
+                !object.containsKey("lot_number")||
+                !object.containsKey("qty_received")||
+                !object.containsKey("new_lot_number")){
+            log.info("收货订单信息不全"+receiptInfo);
+        }
+        params.put("uuid", UUID.randomUUID().toString().replaceAll("-",""));
+        params.put("voucherCode", object.getString("exp_receipt_id"));
+        params.put("voucherType", "StockTransferIn");
+        params.put("voucherInfo",object.toJSONString());
+        String token = "abc";
+
+        //调用第三方接口
+        HttpClientUtils httpClientUtils = new HttpClientUtils();
+        String url = "https://api.vitalitytex.com.cn/voucher/voucher/v1/vouchers";
+        try {
+            log.info("params:" + params.toString());
+            String result = httpClientUtils.doPost(url, token, params);
+            if (result.contains("操作成功")) {
+                poMapper.updateReceiptStatus(Integer.parseInt(object.get("exp_receipt_id").toString()));
+            } else {
+                log.error("错误信息:" + result);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
+
 }

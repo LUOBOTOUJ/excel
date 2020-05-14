@@ -42,7 +42,7 @@ public class ReserveController {
         BeanUtils.copyProperties(request,reserve);
         reserve.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
         if (!reserveService.save(reserve)){
-            return ResultUtil.fail("500","转储单保存失败",request);
+            return ResultUtil.fail("500","预留保存失败",request);
         }
         return ResultUtil.success(request,"添加成功");
     }

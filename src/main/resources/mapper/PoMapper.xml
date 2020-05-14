@@ -6,4 +6,12 @@
       VALUES(#{prepareReceiptCode},#{supplierCode},#{supplierName},#{factoryInvoice},#{deleteStatus},#{createDate})
     </insert>
 
+    <select id="selectReceiptInfo" parameterType="string" resultType="hashmap">
+      select top 1 * from tbl_inf_exp_receipt where status = 'N' order by receipt_Date
+    </select>
+
+    <update id="updateReceiptStatus" parameterType="string">
+      update tbl_inf_exp_receipt set status = 'N' where exp_receipt_id = #{id}
+    </update>
+
 </mapper>

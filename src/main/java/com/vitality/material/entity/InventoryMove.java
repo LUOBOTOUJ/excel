@@ -7,7 +7,6 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.time.LocalDate;
 
 @Data
 @TableName("tbl_inf_exp_inv_movement")
@@ -15,23 +14,23 @@ public class InventoryMove extends Model<InventoryMove> {
     private static final long serialVersionUID = 1L;
 
 
+    @TableField(value = "control_number")
+    private String controlNumber;
+
+    @TableField(value = "move_type")
+    private String moveType;
+
     @TableField("uuID")
     private Integer uuid;
 
     @TableField("moveDate")
     private Date moveDate;
 
-    @TableField("from_inventory")
-    private String fromInventory;
+    @TableField("inventory")
+    private String inventory;
 
-    @TableField("from_sub_inventory")
-    private String fromSubInv;
-
-    @TableField("to_inventory")
-    private String toInventory;
-
-    @TableField("to_sub_inventory")
-    private String toSubInv;
+    @TableField("sub_inventory")
+    private String subInv;
 
     @TableField("material_code")
     private String materialCode;

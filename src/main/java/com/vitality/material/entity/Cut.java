@@ -11,6 +11,8 @@ import java.util.Date;
 @TableName("tbl_inf_exp_cut")
 public class Cut {
     private static final long serialVersionUID = 1L;
+    @TableField(value = "control_number")
+    private String controlNumber;
 
     @TableField("id")
     private Integer id;
